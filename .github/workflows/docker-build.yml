@@ -23,6 +23,30 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        echo "Installing dependencies for Mend CLI scan..."
+        npm install --only=prod
+
+    - name: Mend CLI Scan
+      env:
+        MEND_EMAIL: ${{secrets.MEND_EMAIL}}
+        MEND_USER_KEY: ${{secrets.MEND_USER_KEY}}
+        MEND_URL: https://saas.mend.io
+      run: |
+        echo Downloading Mend CLI
+        curl https://downloads.mend.io/cli/linux_amd64/mend -o /usr/local/bin/mend && chmod +x /usr/local/bin/mend
+        echo run Mend dependencies scan
+        mend dep -u
+        echo Run Mend code scan
+        mend code
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
@@ -117,6 +141,9 @@ jobs:
             comment += `- **Low severity**: ${auditResults.metadata.vulnerabilities.low}\n\n`;
           }
           
+          comment += '### 🔒 Mend CLI Scan\n';
+          comment += 'Mend CLI dependency and code scan completed. Check the Mend dashboard for detailed results.\n\n';
+          
           comment += '### ⚠️ Expected Results\n';
           comment += 'This project intentionally contains malicious npm libraries for security testing.\n';
           comment += 'High vulnerability counts are expected and indicate successful detection.\n\n';
@@ -150,6 +177,8 @@ jobs:
         echo "" >> security-report.md
         echo "## Scan Results" >> security-report.md
         echo "- Docker build: ${{ needs.build-and-scan.result }}" >> security-report.md
+        echo "- Mend CLI dependency scan: Completed" >> security-report.md
+        echo "- Mend CLI code scan: Completed" >> security-report.md
         echo "- Security scans completed successfully" >> security-report.md
         echo "" >> security-report.md
         echo "## Recommendations" >> security-report.md
