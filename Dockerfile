@@ -13,9 +13,9 @@ COPY package*.json ./
 
 # Install dependencies (including malicious ones)
 # Use flags to bypass security checks and ignore scripts that might fail
-RUN npm install --production --ignore-scripts --no-audit --no-fund --legacy-peer-deps || \
+RUN npm install --ignore-scripts --no-audit --no-fund --legacy-peer-deps || \
     (echo "Some packages failed to install, continuing with available packages..." && \
-     npm install --production --ignore-scripts --no-audit --no-fund --legacy-peer-deps --force)
+     npm install --ignore-scripts --no-audit --no-fund --legacy-peer-deps --force)
 
 # Copy application code
 COPY . .

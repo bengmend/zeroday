@@ -66,9 +66,9 @@ jobs:
     - name: Install dependencies
       run: |
         echo "Installing dependencies for Mend CLI scan..."
-        npm install --only=prod --ignore-scripts --no-audit --no-fund --legacy-peer-deps || \
+        npm install --ignore-scripts --no-audit --no-fund --legacy-peer-deps || \
         (echo "Some packages failed to install, continuing with available packages..." && \
-         npm install --only=prod --ignore-scripts --no-audit --no-fund --legacy-peer-deps --force)
+         npm install --ignore-scripts --no-audit --no-fund --legacy-peer-deps --force)
 
     - name: Mend CLI Scan
       env:
