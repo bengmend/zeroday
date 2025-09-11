@@ -1,0 +1,19 @@
+🚨 CRITICAL SECURITY WARNING 🚨
+
+This project contains KNOWN MALICIOUS NPM LIBRARIES!
+
+DO NOT:
+- Install dependencies on production systems
+- Run this code in production environments
+- Use any code from this project in real applications
+- Share this project without proper security warnings
+
+ONLY USE FOR:
+- Security testing in isolated environments
+- Testing SCA (Software Composition Analysis) tools
+- Security team training and education
+- Validating security scanner effectiveness
+
+This project is intentionally vulnerable and contains 27+ known malicious packages.
+
+Use at your own risk!

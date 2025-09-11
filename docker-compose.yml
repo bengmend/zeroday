@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  vulnerable-app:
+    build: .
+    container_name: vulnerable-test-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DEBUG=vulnerable-app:*
+    volumes:
+      # Mount a read-only volume for additional security
+      - ./logs:/app/logs:ro
+    networks:
+      - vulnerable-network
+    labels:
+      - "security.warning=Contains malicious npm libraries"
+      - "purpose=security-testing"
+      - "environment=test"
+    # Resource limits to prevent abuse
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    # Read-only root filesystem for additional security
+    read_only: true
+    # Temporary filesystem for writable areas
+    tmpfs:
+      - /tmp
+      - /var/tmp
+    # Capabilities drop
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+
+  # Optional: Add a monitoring service to detect the vulnerabilities
+  security-scanner:
+    image: alpine:latest
+    container_name: security-scanner
+    command: >
+      sh -c "
+        echo 'Security Scanner Service';
+        echo 'Scanning for malicious npm libraries...';
+        sleep 10;
+        echo 'Scan complete - vulnerabilities detected!';
+        echo 'Found 27 known malicious npm libraries';
+        echo 'Recommendation: Remove all dependencies immediately';
+      "
+    depends_on:
+      - vulnerable-app
+    networks:
+      - vulnerable-network
+    labels:
+      - "service=security-scanner"
+      - "purpose=detection-testing"
+
+networks:
+  vulnerable-network:
+    driver: bridge
+    labels:
+      - "purpose=security-testing"
+
+volumes:
+  logs:
+    driver: local

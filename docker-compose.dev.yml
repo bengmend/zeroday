@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  vulnerable-app-dev:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: vulnerable-test-app-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Node.js debug port
+    environment:
+      - NODE_ENV=development
+      - DEBUG=vulnerable-app:*
+    volumes:
+      # Mount source code for development
+      - .:/app
+      - /app/node_modules
+    networks:
+      - vulnerable-network
+    labels:
+      - "security.warning=Contains malicious npm libraries"
+      - "purpose=security-testing"
+      - "environment=development"
+    command: ["npm", "run", "dev"]
+    stdin_open: true
+    tty: true
+
+networks:
+  vulnerable-network:
+    driver: bridge
