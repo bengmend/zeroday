@@ -38,14 +38,15 @@ jobs:
       env:
         MEND_EMAIL: ${{secrets.MEND_EMAIL}}
         MEND_USER_KEY: ${{secrets.MEND_USER_KEY}}
-        MEND_URL: https://saas.mend.io
+        MEND_URL: https://saas-eu.mend.io
       run: |
         echo Downloading Mend CLI
         curl https://downloads.mend.io/cli/linux_amd64/mend -o /usr/local/bin/mend && chmod +x /usr/local/bin/mend
         echo run Mend dependencies scan
-        mend dep -u
+        ./mend dep -u -r
         echo Run Mend code scan
-        mend code
+        ./mend code -s
+        ./mend image
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -191,3 +192,4 @@ jobs:
       with:
         name: security-report
         path: security-report.md
+./mend container
