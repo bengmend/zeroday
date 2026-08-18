@@ -27,7 +27,7 @@
     "is-arrayish": "0.3.3",
     "slice-ansi": "7.1.1",
     "color-convert": "3.1.1",
-    "wrap-ansi": "9.0.1",
+    "wrap-ansi": "10.0.1",
     "ansi-regex": "6.2.1",
     "supports-color": "10.2.1",
     "strip-ansi": "7.1.1",
